@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, ImageIcon, Sparkles, MessageSquarePlus, RefreshCw, Settings, Menu, X, Clock, LogIn, LogOut } from "lucide-react";
+import { Send, ImageIcon, Sparkles, MessageSquarePlus, RefreshCw, Settings, Menu, X, Clock, LogIn, LogOut, Copy, Check } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { cn } from "./lib/utils";
 import { auth } from "./firebase";
@@ -143,6 +143,17 @@ export default function App() {
   }, [settingsOpen, appLanguage, userPersona]);
   const [randomSuggestions, setRandomSuggestions] = useState<string[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const copyToClipboard = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -314,7 +325,7 @@ export default function App() {
              </button>
            </div>
          ) : (
-           <button onClick={handleSignIn} className="flex items-center justify-center gap-3 p-3 w-full border border-egypt-gold/30 hover:border-egypt-gold/60 bg-egypt-gold/10 hover:bg-egypt-gold/20 rounded-xl text-egypt-gold transition-all mb-2 shadow-[0_0_15px_rgba(197,160,89,0.1)]">
+           <button type="button" onClick={(e) => { e.preventDefault(); handleSignIn(); }} className="flex items-center justify-center gap-3 p-3 w-full border border-egypt-gold/30 hover:border-egypt-gold/60 bg-egypt-gold/10 hover:bg-egypt-gold/20 rounded-xl text-egypt-gold transition-all mb-2 shadow-[0_0_15px_rgba(197,160,89,0.1)]">
              <LogIn size={18} />
              <span className="text-sm font-bold tracking-wide">{t.loginToSave}</span>
            </button>
@@ -475,14 +486,27 @@ export default function App() {
                 </div>
             </div>
             
-            <button 
-                onClick={startNewChat} 
-                className="text-egypt-dark p-2 sm:px-4 sm:py-2 bg-egypt-gold rounded-xl hover:bg-egypt-gold-light active:scale-95 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(197,160,89,0.4)]"
-                title={t.newChat}
-            >
-                <MessageSquarePlus size={20} />
-                <span className="hidden sm:inline text-sm font-bold tracking-widest uppercase">{t.newChat}</span>
-            </button>
+            <div className="flex items-center gap-3">
+               <button
+                  onClick={() => {
+                        const newLang = appLanguage === "en" ? "ar" : "en";
+                        setAppLanguage(newLang);
+                        localStorage.setItem("hosny_language", newLang);
+                  }}
+                  className="text-slate-200 p-2 sm:px-3 sm:py-2 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-white/20 active:scale-95 transition-all shadow-sm font-display font-bold text-sm tracking-widest"
+                  title={appLanguage === "en" ? "Switch to Arabic" : "التبديل للإنجليزية"}
+               >
+                   {appLanguage === "en" ? "AR" : "EN"}
+               </button>
+               <button 
+                   onClick={startNewChat} 
+                   className="text-egypt-dark p-2 sm:px-4 sm:py-2 bg-egypt-gold rounded-xl hover:bg-egypt-gold-light active:scale-95 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(197,160,89,0.4)]"
+                   title={t.newChat}
+               >
+                   <MessageSquarePlus size={20} />
+                   <span className="hidden sm:inline text-sm font-bold tracking-widest uppercase">{t.newChat}</span>
+               </button>
+            </div>
         </header>
 
         {/* Main Scrollable Area */}
@@ -556,7 +580,7 @@ export default function App() {
                            {msg.role === "user" ? t.you : t.amoHosny}
                         </span>
                         <div className={cn(
-                          "p-4 sm:p-5 rounded-3xl shadow-lg leading-relaxed text-sm sm:text-base max-w-[95%] sm:max-w-[85%]",
+                          "p-4 sm:p-5 rounded-3xl shadow-lg leading-relaxed text-sm sm:text-base max-w-[95%] sm:max-w-[85%] group relative",
                           msg.role === "user" 
                             ? "bg-white/10 border border-white/20 text-white rounded-tr-sm backdrop-blur-md" 
                             : "bg-[#161a22]/80 border border-egypt-gold/20 text-slate-200 rounded-tl-sm backdrop-blur-md shadow-[0_5px_30px_rgba(0,0,0,0.3)]"
@@ -564,10 +588,19 @@ export default function App() {
                           {msg.role === "user" ? (
                             msg.content
                           ) : (
-                            <div className="markdown-body prose prose-invert prose-p:text-slate-200 prose-a:text-egypt-gold hover:prose-a:text-egypt-gold-light max-w-none marker:text-egypt-gold">
-                              <ReactMarkdown components={{
-                                a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 decoration-egypt-gold/50 hover:decoration-egypt-gold transition-colors" />
-                              }}>{msg.content}</ReactMarkdown>
+                            <div className="relative">
+                               <div className="markdown-body prose prose-invert prose-p:text-slate-200 prose-a:text-egypt-gold hover:prose-a:text-egypt-gold-light max-w-none marker:text-egypt-gold">
+                                 <ReactMarkdown components={{
+                                   a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 decoration-egypt-gold/50 hover:decoration-egypt-gold transition-colors" />
+                                 }}>{msg.content}</ReactMarkdown>
+                               </div>
+                               <button
+                                 onClick={() => copyToClipboard(msg.content, idx)}
+                                 className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 p-1.5 sm:p-2 bg-[#161a22] border border-white/10 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-all shadow-md focus:opacity-100 outline-none"
+                                 title={appLanguage === "en" ? "Copy answer" : "نسخ الإجابة"}
+                               >
+                                 {copiedIndex === idx ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                               </button>
                             </div>
                           )}
                         </div>
