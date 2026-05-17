@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Hosny.AI",
+  "description": "A fun, practical, and helpful local AI assistant portal for Egyptians, powered by Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

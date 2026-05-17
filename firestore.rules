@@ -1,0 +1,92 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ---------------------------------------------------------
+    // PRELUDE & GLOBAL HELPERS
+    // ---------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() { return request.auth != null; }
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // ---------------------------------------------------------
+    // VALIDATORS
+    // ---------------------------------------------------------
+    function isValidConversation(data) {
+      return data.keys().size() >= 3
+        && data.userId == request.auth.uid // Identity enforcement
+        && data.title is string && data.title.size() <= 200
+        && data.get('createdAt', request.time) is timestamp
+        && data.get('updatedAt', request.time) is timestamp;
+    }
+
+    function isValidMessage(data) {
+      return data.keys().size() >= 2
+        && data.role in ['user', 'model']
+        && data.content is string && data.content.size() <= 10000
+        && data.get('createdAt', request.time) is timestamp;
+    }
+
+    // ---------------------------------------------------------
+    // CONVERSATIONS
+    // ---------------------------------------------------------
+    match /conversations/{conversationId} {
+      allow read: if isSignedIn() 
+                  && isValidId(conversationId) 
+                  && existing().userId == request.auth.uid;
+      
+      allow list: if isSignedIn() 
+                  && resource.data.userId == request.auth.uid;
+
+      allow create: if isSignedIn() 
+                    && isValidId(conversationId)
+                    && isValidConversation(incoming())
+                    && incoming().createdAt == request.time
+                    && incoming().updatedAt == request.time;
+      
+      allow update: if isSignedIn()
+                    && isValidId(conversationId)
+                    && existing().userId == request.auth.uid
+                    && isValidConversation(incoming())
+                    && incoming().userId == existing().userId 
+                    && incoming().createdAt == existing().createdAt
+                    && incoming().updatedAt == request.time
+                    && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'updatedAt']);
+                    
+      allow delete: if isSignedIn()
+                    && isValidId(conversationId)
+                    && existing().userId == request.auth.uid;
+
+      // ---------------------------------------------------------
+      // MESSAGES
+      // ---------------------------------------------------------
+      match /messages/{messageId} {
+         allow read: if isSignedIn() 
+                     && isValidId(conversationId) 
+                     && isValidId(messageId)
+                     && get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId == request.auth.uid;
+                     
+         allow list: if isSignedIn() 
+                     && isValidId(conversationId)
+                     && get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId == request.auth.uid;
+                     
+         allow create: if isSignedIn()
+                       && isValidId(conversationId)
+                       && isValidId(messageId)
+                       && get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId == request.auth.uid
+                       && isValidMessage(incoming())
+                       && incoming().createdAt == request.time;
+                       
+         allow update: if false; // Messages are immutable
+         
+         allow delete: if false; // Messages can't be deleted individually, delete the conversation instead
+      }
+    }
+  }
+}
