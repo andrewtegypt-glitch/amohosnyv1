@@ -16,31 +16,113 @@ type Message = {
   suggestions?: string[];
 };
 
-const TOURIST_QUERIES = [
-  "How long did it actually take to build the pyramids?",
-  "What is the best way to get to the Pyramids of Giza?",
-  "How do you negotiate at Khan el-Khalili?",
-  "What should I wear when visiting Cairo?",
-  "Can you teach me some basic Egyptian Arabic phrases?",
-  "What's the real story behind the Sphinx's missing nose?",
-  "Tell me about the history of Alexandria.",
-  "What are some must-see places outside of Cairo?",
-  "What is the best time of year to visit Egypt?"
-];
-
-const LOCAL_QUERIES = [
-  "What's the best local spot for Koshary in Downtown?",
-  "Give me an Egyptian proverb for someone who talks too much.",
-  "Tell me a classic Masry joke.",
-  "Can you teach me some essential Egyptian street slang?",
-  "Recommend a classic Adel Emam movie.",
-  "What's the secret to making good Mahshi?",
-  "How to make the perfect cup of Egyptian tea with mint?",
-  "What is the best way to avoid traffic on the Ring Road?",
-  "Tell me a story about old Cairo."
-];
+const TRANSLATIONS = {
+  en: {
+    startFresh: "Start Fresh",
+    pastInteractions: "Past Interactions",
+    loginToSave: "Sign In to Save",
+    signOut: "Sign Out",
+    placeholder: "Ask Amo Hosny...",
+    thinking: "Amo Hosny is thinking...",
+    tourist: "Tourist",
+    local: "Local Egyptian",
+    whoAreYou: "Who are you?",
+    touristDesc: "Suggested prompts will cater to travel, history, and advice.",
+    localDesc: "Suggested prompts will cater to street smarts, slang, and local culture.",
+    internetError: "Ma2lesh, it seems my internet is acting up! Try again in a minute ya basha.",
+    welcomeTitle: "Ahlan Ya Habibi!",
+    welcomeDesc: "I am your Uncle Hosny. Ask me about local history, advice, or just for a good laugh.",
+    settings: "Settings",
+    confirmSettings: "Confirm Settings",
+    newChat: "New Chat",
+    you: "You",
+    amoHosny: "Amo Hosny",
+    tagline: "Engineered with Gemini for the Egyptian Soul",
+    settingsTitle: "Settings",
+    languageTitle: "Language / اللغة",
+    TOURIST_QUERIES: [
+      "How long did it actually take to build the pyramids?",
+      "What is the best way to get to the Pyramids of Giza?",
+      "How do you negotiate at Khan el-Khalili?",
+      "What should I wear when visiting Cairo?",
+      "Can you teach me some basic Egyptian Arabic phrases?",
+      "What's the real story behind the Sphinx's missing nose?",
+      "Tell me about the history of Alexandria.",
+      "What are some must-see places outside of Cairo?",
+      "What is the best time of year to visit Egypt?"
+    ],
+    LOCAL_QUERIES: [
+      "What's the best local spot for Koshary in Downtown?",
+      "Give me an Egyptian proverb for someone who talks too much.",
+      "Tell me a classic Masry joke.",
+      "Can you teach me some essential Egyptian street slang?",
+      "Recommend a classic Adel Emam movie.",
+      "What's the secret to making good Mahshi?",
+      "How to make the perfect cup of Egyptian tea with mint?",
+      "What is the best way to avoid traffic on the Ring Road?",
+      "Tell me a story about old Cairo."
+    ]
+  },
+  ar: {
+    startFresh: "محادثة جديدة",
+    pastInteractions: "المحادثات السابقة",
+    loginToSave: "تسجيل الدخول",
+    signOut: "تسجيل الخروج",
+    placeholder: "اسأل عمو حسني...",
+    thinking: "عمو حسني بيفكر...",
+    tourist: "سائح",
+    local: "مصري",
+    whoAreYou: "إنت مين؟ (Who are you?)",
+    touristDesc: "هقترح عليك أسئلة عن السفر، التاريخ، ونصائح للسياح.",
+    localDesc: "هقترح عليك أسئلة عن ثقافة الشارع، الأمثال، وتفاصيل المصريين.",
+    internetError: "معلش، النت عندي بعافية شوية! جرب تاني كمان دقيقة يا باشا.",
+    welcomeTitle: "أهلاً يا حبيبي!",
+    welcomeDesc: "أنا عمك حسني. اسألني عن التاريخ، نصيحة، أو حتى لو عايز تضحك.",
+    settings: "الإعدادات",
+    confirmSettings: "تأكيد الإعدادات",
+    newChat: "محادثة جديدة",
+    you: "أنت",
+    amoHosny: "عمو حسني",
+    tagline: "مبني بـ Gemini للروح المصرية",
+    settingsTitle: "الإعدادات",
+    languageTitle: "اللغة / Language",
+    TOURIST_QUERIES: [
+      "استغرق بناء الأهرامات قد ايه فعلاً؟",
+      "إيه أحسن طريقة أروح بيها أهرامات الجيزة؟",
+      "إزاي أفاصل في خان الخليلي؟",
+      "ألبس إيه وأنا بزور القاهرة؟",
+      "ممكن تعلمني شوية جمل أساسية بالعربي المصري؟",
+      "إيه القصة الحقيقية ورا مناخير أبو الهول المكسورة؟",
+      "كلمني عن تاريخ إسكندرية.",
+      "إيه الأماكن اللي لازم أزورها بره القاهرة؟",
+      "إيه أحسن وقت في السنة أزور فيه مصر؟"
+    ],
+    LOCAL_QUERIES: [
+      "إيه أحسن مكان أكل فيه كشري في وسط البلد؟",
+      "قولي مثل شعبي لواحد بيتكلم كتير.",
+      "قولي نكتة مصرية أصيلة.",
+      "ممكن تعلمني شوية كلام شبابي في الشارع؟",
+      "رشحلي فيلم كلاسيكي لعادل إمام.",
+      "إيه سر عمل محشي حلو؟",
+      "إزاي أعمل أحلى كوباية شاي بالنعناع؟",
+      "إيه أحسن طريق أهرب بيه من زحمة الدائري؟",
+      "احكيلي قصة عن القاهرة القديمة."
+    ]
+  }
+};
 
 export default function App() {
+  const [appLanguage, setAppLanguage] = useState<"en" | "ar">(() => {
+     return (localStorage.getItem("hosny_language") as "en" | "ar") || "en";
+  });
+  const t = TRANSLATIONS[appLanguage];
+
+  const toggleLanguage = () => {
+    const newLang = appLanguage === "en" ? "ar" : "en";
+    setAppLanguage(newLang);
+    localStorage.setItem("hosny_language", newLang);
+  };
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -49,6 +131,16 @@ export default function App() {
   const [userPersona, setUserPersona] = useState<"tourist" | "local">(() => {
      return (localStorage.getItem("hosny_persona") as "tourist" | "local") || "tourist";
   });
+  
+  const [tempLanguage, setTempLanguage] = useState<"en" | "ar">(appLanguage);
+  const [tempPersona, setTempPersona] = useState<"tourist" | "local">(userPersona);
+
+  useEffect(() => {
+    if (settingsOpen) {
+      setTempLanguage(appLanguage);
+      setTempPersona(userPersona);
+    }
+  }, [settingsOpen, appLanguage, userPersona]);
   const [randomSuggestions, setRandomSuggestions] = useState<string[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -63,9 +155,18 @@ export default function App() {
   const handleSignIn = async () => {
     try {
       const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
       await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error("Sign in failed", error);
+    } catch (error: any) {
+      console.error("Sign in failed full error:", error);
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+         // Silently ignore when user closes the popup or cancels
+         console.log("Sign in cancelled by user.");
+      } else {
+         alert(`Sign in failed: ${error.message || "Unknown error"}. Make sure your domain is added to Firebase Auth Authorized Domains and third-party cookies are allowed.`);
+      }
     }
   };
 
@@ -77,15 +178,15 @@ export default function App() {
     }
   };
 
-  const shuffleSuggestions = (persona: "tourist" | "local" = userPersona) => {
-    const queries = persona === "tourist" ? TOURIST_QUERIES : LOCAL_QUERIES;
+  const shuffleSuggestions = (persona: "tourist" | "local" = userPersona, lang: "en" | "ar" = appLanguage) => {
+    const queries = persona === "tourist" ? TRANSLATIONS[lang].TOURIST_QUERIES : TRANSLATIONS[lang].LOCAL_QUERIES;
     const shuffled = [...queries].sort(() => 0.5 - Math.random());
     setRandomSuggestions(shuffled.slice(0, 4));
   };
 
   useEffect(() => {
-    shuffleSuggestions(userPersona);
-  }, [userPersona]);
+    shuffleSuggestions(userPersona, appLanguage);
+  }, [userPersona, appLanguage]);
 
   const togglePersona = (persona: "tourist" | "local") => {
      setUserPersona(persona);
@@ -123,6 +224,7 @@ export default function App() {
         body: JSON.stringify({
           message: text,
           persona: userPersona,
+          language: appLanguage,
           history: messages.map((m) => ({ role: m.role, content: m.content })),
         }),
       });
@@ -137,9 +239,12 @@ export default function App() {
          content: data.reply, 
          suggestions: data.suggestions && Array.isArray(data.suggestions) ? data.suggestions : [] 
       }]);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setMessages((prev) => [...prev, { role: "model", content: "Ma2lesh, it seems my internet is acting up! Try again in a minute ya basha." }]);
+      const errorMessage = error.message && error.message !== "Failed to fetch" 
+         ? error.message 
+         : t.internetError;
+      setMessages((prev) => [...prev, { role: "model", content: errorMessage }]);
     } finally {
       setIsLoading(false);
     }
@@ -176,12 +281,12 @@ export default function App() {
       <div className="p-4 border-b border-white/5">
          <button onClick={startNewChat} className="w-full flex justify-center items-center gap-2 bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 p-3 rounded-xl font-medium transition-all">
             <MessageSquarePlus size={18} className="text-egypt-gold" />
-            <span>Start Fresh</span>
+            <span>{t.startFresh}</span>
          </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-thin scrollbar-thumb-white/10">
-         <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-4 px-1">Past Interactions</p>
+         <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-4 px-1">{t.pastInteractions}</p>
          
          <button className="w-full text-left p-3 rounded-xl bg-transparent border border-transparent hover:border-white/10 hover:bg-white/5 text-xs sm:text-sm text-slate-400 hover:text-slate-200 transition-all flex items-center gap-3 group">
             <Clock size={14} className="opacity-50 group-hover:text-egypt-gold group-hover:opacity-100 transition-all shrink-0" />
@@ -204,27 +309,27 @@ export default function App() {
                <p className="text-xs font-bold text-white truncate">{currentUser.displayName || 'Traveler'}</p>
                <p className="text-[10px] text-slate-400 truncate tracking-tight">{currentUser.email}</p>
              </div>
-             <button onClick={handleSignOut} className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors" title="Sign Out">
+             <button onClick={handleSignOut} className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors" title={t.signOut}>
                <LogOut size={16} />
              </button>
            </div>
          ) : (
            <button onClick={handleSignIn} className="flex items-center justify-center gap-3 p-3 w-full border border-egypt-gold/30 hover:border-egypt-gold/60 bg-egypt-gold/10 hover:bg-egypt-gold/20 rounded-xl text-egypt-gold transition-all mb-2 shadow-[0_0_15px_rgba(197,160,89,0.1)]">
              <LogIn size={18} />
-             <span className="text-sm font-bold tracking-wide">Sign In to Save</span>
+             <span className="text-sm font-bold tracking-wide">{t.loginToSave}</span>
            </button>
          )}
 
          <button onClick={() => setSettingsOpen(true)} className="flex items-center gap-3 p-3 w-full border border-transparent hover:border-white/10 bg-white/5 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-all">
             <Settings size={18} className="text-egypt-gold" />
-            <span className="text-sm font-medium">Settings</span>
+            <span className="text-sm font-medium">{t.settings}</span>
          </button>
       </div>
     </div>
   );
 
   return (
-    <div className="flex h-[100dvh] w-full bg-egypt-dark text-slate-200 font-sans overflow-hidden">
+    <div className="flex h-[100dvh] w-full bg-egypt-dark text-slate-200 font-sans overflow-hidden" dir={appLanguage === 'ar' ? 'rtl' : 'ltr'}>
       {/* Dynamic Keyframes for Smoke */}
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes smoke-flow {
@@ -276,39 +381,82 @@ export default function App() {
              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm shadow-2xl" onClick={() => setSettingsOpen(false)} />
              <div className="relative bg-[#111318] border border-white/10 rounded-2xl w-full max-w-md shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
                 <div className="p-5 border-b border-white/5 flex items-center justify-between">
-                   <h2 className="text-xl font-display font-medium text-slate-200">Settings</h2>
+                   <h2 className="text-xl font-display font-medium text-slate-200">{t.settingsTitle}</h2>
                    <button onClick={() => setSettingsOpen(false)} className="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors">
                      <X size={20} />
                    </button>
                 </div>
                 <div className="p-6 space-y-6">
                    <div>
-                      <h3 className="text-sm font-medium text-slate-300 mb-3">Who are you?</h3>
+                      <h3 className="text-sm font-medium text-slate-300 mb-3">{t.languageTitle}</h3>
                       <div className="flex bg-black/50 p-1 rounded-xl border border-white/5">
                          <button 
-                           onClick={() => togglePersona("tourist")}
+                           onClick={() => setTempLanguage('en')}
                            className={cn(
                              "flex-1 py-2 text-sm font-medium rounded-lg transition-all",
-                             userPersona === "tourist" ? "bg-white/10 text-white shadow-sm" : "text-slate-500 hover:text-slate-300"
+                             tempLanguage === "en" ? "bg-white/10 text-white shadow-sm" : "text-slate-500 hover:text-slate-300"
                            )}
                          >
-                           Tourist
+                           English
                          </button>
                          <button 
-                           onClick={() => togglePersona("local")}
+                           onClick={() => setTempLanguage('ar')}
                            className={cn(
-                             "flex-1 py-2 text-sm font-medium rounded-lg transition-all",
-                             userPersona === "tourist" ? "text-slate-500 hover:text-slate-300" : "bg-white/10 text-white shadow-sm"
+                             "flex-1 py-2 text-sm font-medium rounded-lg transition-all font-display",
+                             tempLanguage === "ar" ? "bg-white/10 text-white shadow-sm" : "text-slate-500 hover:text-slate-300"
                            )}
                          >
-                           Local Egyptian
+                           العربية
+                         </button>
+                      </div>
+                   </div>
+                   <div>
+                      <h3 className="text-sm font-medium text-slate-300 mb-3">{t.whoAreYou}</h3>
+                      <div className="flex bg-black/50 p-1 rounded-xl border border-white/5">
+                         <button 
+                           onClick={() => setTempPersona("tourist")}
+                           className={cn(
+                             "flex-1 py-2 text-sm font-medium rounded-lg transition-all",
+                             tempPersona === "tourist" ? "bg-white/10 text-white shadow-sm" : "text-slate-500 hover:text-slate-300"
+                           )}
+                         >
+                           {t.tourist}
+                         </button>
+                         <button 
+                           onClick={() => setTempPersona("local")}
+                           className={cn(
+                             "flex-1 py-2 text-sm font-medium rounded-lg transition-all",
+                             tempPersona === "local" ? "bg-white/10 text-white shadow-sm" : "text-slate-500 hover:text-slate-300"
+                           )}
+                         >
+                           {t.local}
                          </button>
                       </div>
                       <p className="mt-3 text-xs text-slate-500">
-                         {userPersona === "tourist" ? "Suggested prompts will cater to travel, history, and advice." : "Suggested prompts will cater to street smarts, slang, and local culture."}
+                         {tempPersona === "tourist" ? t.touristDesc : t.localDesc}
                       </p>
                    </div>
                 </div>
+                 <div className="p-5 border-t border-white/5 flex gap-2">
+                    <button 
+                      onClick={() => setSettingsOpen(false)}
+                      className="w-1/3 py-3 bg-white/5 text-white font-medium rounded-xl hover:bg-white/10 transition-all font-display"
+                    >
+                      {appLanguage === "en" ? "Cancel" : "إلغاء"}
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setAppLanguage(tempLanguage);
+                        localStorage.setItem("hosny_language", tempLanguage);
+                        setUserPersona(tempPersona);
+                        localStorage.setItem("hosny_persona", tempPersona);
+                        setSettingsOpen(false);
+                      }}
+                      className="w-2/3 py-3 bg-egypt-gold text-egypt-dark font-bold rounded-xl hover:bg-egypt-gold-light transition-all active:scale-95 font-display"
+                    >
+                      {t.confirmSettings}
+                    </button>
+                 </div>
              </div>
           </div>
         )}
@@ -330,10 +478,10 @@ export default function App() {
             <button 
                 onClick={startNewChat} 
                 className="text-egypt-dark p-2 sm:px-4 sm:py-2 bg-egypt-gold rounded-xl hover:bg-egypt-gold-light active:scale-95 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(197,160,89,0.4)]"
-                title="New Conversation"
+                title={t.newChat}
             >
                 <MessageSquarePlus size={20} />
-                <span className="hidden sm:inline text-sm font-bold tracking-widest uppercase">New Chat</span>
+                <span className="hidden sm:inline text-sm font-bold tracking-widest uppercase">{t.newChat}</span>
             </button>
         </header>
 
@@ -391,10 +539,10 @@ export default function App() {
                    {isIdle && (
                       <div className="mt-8 text-center animate-fade-in transition-opacity">
                          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent mb-4 tracking-tight drop-shadow-md">
-                            Ahlan Ya Habibi!
+                            {t.welcomeTitle}
                          </h1>
                          <p className="text-slate-400 text-sm sm:text-base max-w-sm mx-auto leading-relaxed px-4">
-                            I am your Uncle Hosny. Ask me about local history, advice, or just for a good laugh.
+                            {t.welcomeDesc}
                          </p>
                       </div>
                    )}
@@ -405,7 +553,7 @@ export default function App() {
                    {messages.map((msg, idx) => (
                       <div key={idx} className={cn("flex flex-col w-full", msg.role === "user" ? "items-end" : "items-start")}>
                         <span className="text-[10px] text-slate-400 tracking-widest uppercase font-mono mb-1.5 px-2">
-                           {msg.role === "user" ? "You" : "Amo Hosny"}
+                           {msg.role === "user" ? t.you : t.amoHosny}
                         </span>
                         <div className={cn(
                           "p-4 sm:p-5 rounded-3xl shadow-lg leading-relaxed text-sm sm:text-base max-w-[95%] sm:max-w-[85%]",
@@ -469,7 +617,7 @@ export default function App() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder={isLoading ? "Amo Hosny is thinking..." : "Ask Amo Hosny..."}
+                    placeholder={isLoading ? t.thinking : t.placeholder}
                     className="w-full bg-transparent px-2 sm:px-3 py-3 outline-none text-slate-200 placeholder:text-slate-500 text-[15px] sm:text-base font-light transition-all"
                     disabled={isLoading}
                  />
@@ -490,7 +638,7 @@ export default function App() {
               {/* Tagline */}
               {!isIdle && (
                  <p className="text-center text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-4 mb-1 opacity-50 hidden sm:block">
-                    Engineered with Gemini for the Egyptian Soul
+                    {t.tagline}
                  </p>
               )}
            </div>
