@@ -21,7 +21,14 @@ async function startServer() {
       if (!apiKey || apiKey === "undefined" || apiKey === "null" || apiKey === "MY_GEMINI_API_KEY") {
         throw new Error("GEMINI_API_KEY is missing or invalid. Please configure your Gemini API Key in the AI Studio Secrets panel, or in your hosting provider's dashboard (e.g. Render, Vercel) if deployed.");
       }
-      ai = new GoogleGenAI({ apiKey: apiKey });
+      ai = new GoogleGenAI({ 
+        apiKey: apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          }
+        }
+      });
     }
     return ai;
   };
@@ -63,7 +70,7 @@ Keep responses engaging, visually easy to read (using markdown), and full of cha
 Return your response strictly as a JSON object with two fields: 'reply' (your markdown text) and 'suggestions' (an array of exactly 3 relevant, short, snappy follow-up questions the user could ask next).`;
 
       const response = await client.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3-flash-preview',
         contents: [
             ...refinedHistory,
             // Insert System Instruction as the first message or use system_instruction param
