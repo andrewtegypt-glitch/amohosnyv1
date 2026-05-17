@@ -93,6 +93,11 @@ Return your response strictly as a JSON object with two fields: 'reply' (your ma
       
       let errorMessage = error.message || "Something went wrong ya basha!";
       
+      // Attempt to parse out Gemini specific errors to show better UI text
+      if (errorMessage.includes("429") || errorMessage.includes("Quota")) {
+         errorMessage = "Ah ya basha, we hit our limit with Google (429 Quota Exceeded). Since you added your billing details, give it a few minutes or verify your limits at the Google Cloud Console.";
+      }
+
       res.status(500).json({ error: errorMessage });
     }
   });
